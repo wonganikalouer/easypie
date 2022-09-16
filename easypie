@@ -1,0 +1,67 @@
+<?php
+
+$arguments = $_SERVER["argv"];
+$action = @$arguments[1];
+
+if(empty($action)){
+    $action = "help";
+}
+
+//CREATE MODELS
+if($action=="create-models"){
+    //incase more than one model is getting created
+    if(count($arguments)>=2){
+        for($i=2;$i<count($arguments);$i++){
+            $modelName = $arguments[$i];
+            $modelNameLowerCase = strtolower($arguments[$i]);
+            $modelData = 
+    "<?php
+namespace Model;
+require_once 'system/easeroutes/src/database.php';
+use EaseRoutes\DatabaseConnection;
+
+class $modelName extends DatabaseConnection{
+var \$TABLE = '$modelNameLowerCase';
+    public function getTable(){
+        return \$this->TABLE;
+    }
+
+}
+    ";
+    file_put_contents("src/model/".strtolower($modelName).".php", $modelData);
+}
+}
+print "Models Created Successfully!";
+}
+
+if($action=="help"){
+    print "--------------------------------------------------------------\n
+    -------------Welcome to Easy Pie PHP Framework-----------\nIts Easy, just like that.";
+}
+
+if ($action=="clean"){
+    print "warning! This will remove all project files and clean it as an empty project\n";
+    $models         = scandir("src/model");
+    $controllers    = scandir("src/controller");
+
+    //DELETE MODELS
+    for($i=2;$i<count($models);$i++){
+        $model = $models[$i];
+        if($model=="." || $model==".." || ($model!="settings.php" and $model!="database.php")){
+            print "Deleting - ". $model."\n";
+            unlink("src/model/$model");
+        }
+    }
+    //DELETE CONTROLLERS
+    for($i=2;$i<count($controllers);$i++){
+        $model = $controllers[$i];
+        if($model=="." || $model==".." || ($model!="settings.php" and $model!="database.php")){
+            print "Deleting - ". $model."\n";
+            unlink("src/controller/$model");
+        }
+    }
+
+    //DELETE VIEWS
+
+    //CLEAN ROUTES
+}
